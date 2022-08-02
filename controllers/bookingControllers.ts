@@ -5,6 +5,7 @@ import Booking from "../models/booking";
 import User from "../models/user";
 import { BookingAPIFeatures } from "../utils/apiFeatures";
 import sendEmail from "../utils/sendEmail";
+let cloudinary = require("cloudinary").v2;
 
 // interface OrderDataInterface {
 //     price: number;
@@ -222,6 +223,7 @@ const updateBooking = catchAsyncErrors(
             singleTextResponse,
             stripePaymentIntentId,
             _id,
+            videoResponse,
 
             // boolean denoting whether to charge the Stripe payment intent,
             // since "updating the booking" possibly means the expert just responded,
@@ -229,58 +231,71 @@ const updateBooking = catchAsyncErrors(
             chargePaymentIntent,
         } = req.body;
 
-        // Get Stripe Payment Intent from the stripePaymentIntentId and capture
-        // the payment if chargePaymentIntent is true. Return an error and don't
-        // continue to update the booking, if this fails.
-        if (chargePaymentIntent) {
-            const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-            const paymentIntent = await stripe.paymentIntents.capture(
-                stripePaymentIntentId
-            );
-            if (!paymentIntent) {
-                return next(
-                    new ErrorHandler(
-                        "Payment Intent not captured successfully",
-                        400
-                    )
-                );
-            }
+        console.log(req.files);
+        console.log(videoResponse);
 
-            let customerEmailSubject = `SlicedAdvice: ${expert.name} has completed your booking!`;
-            let customerEmailMessage = `Hi there, ${customer.name}, \n\n
-            ${expert.name} has completed your booking! \n\n
-            You can view the details of your booking here: \n
-            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/dashboard/adviceSeeker/bookings?booking=${_id} \n\n
-            Make sure to leave a review on the expertise post, and feel free to contact us if you have any questions. \n\n
-            Thanks for using SlicedAdvice! \n\n
-            SlicedAdvice Team`;
 
-            await sendEmail({
-                email: customer.email,
-                subject: customerEmailSubject,
-                message: customerEmailMessage,
-            });
-        }
+        console.log("I am here!");
+        console.log(singleTextResponse);
 
-        const booking = await Booking.findByIdAndUpdate(
-            _id,
-            {
-                bookingType,
-                expert,
-                customer,
-                expertisePost,
-                status,
-                singleTextResponse,
-                stripePaymentIntentId,
-            },
-            { new: true }
-        );
+        // const result = await cloudinary.uploader.upload(singleTextResponse.videoResponse, {
+        //     folder: "slicedadvice/videoResponses"
+        // });
 
-        if (!booking) {
-            return next(new ErrorHandler("Booking could not be updated", 400));
-        }
+        // console.log(result);
 
-        res.status(200).json({ booking });
+        // // Get Stripe Payment Intent from the stripePaymentIntentId and capture
+        // // the payment if chargePaymentIntent is true. Return an error and don't
+        // // continue to update the booking, if this fails.
+        // if (chargePaymentIntent) {
+        //     const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+        //     const paymentIntent = await stripe.paymentIntents.capture(
+        //         stripePaymentIntentId
+        //     );
+        //     if (!paymentIntent) {
+        //         return next(
+        //             new ErrorHandler(
+        //                 "Payment Intent not captured successfully",
+        //                 400
+        //             )
+        //         );
+        //     }
+
+        //     let customerEmailSubject = `SlicedAdvice: ${expert.name} has completed your booking!`;
+        //     let customerEmailMessage = `Hi there, ${customer.name}, \n\n
+        //     ${expert.name} has completed your booking! \n\n
+        //     You can view the details of your booking here: \n
+        //     ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/dashboard/adviceSeeker/bookings?booking=${_id} \n\n
+        //     Make sure to leave a review on the expertise post, and feel free to contact us if you have any questions. \n\n
+        //     Thanks for using SlicedAdvice! \n\n
+        //     SlicedAdvice Team`;
+
+        //     await sendEmail({
+        //         email: customer.email,
+        //         subject: customerEmailSubject,
+        //         message: customerEmailMessage,
+        //     });
+        // }
+
+        // const booking = await Booking.findByIdAndUpdate(
+        //     _id,
+        //     {
+        //         bookingType,
+        //         expert,
+        //         customer,
+        //         expertisePost,
+        //         status,
+        //         singleTextResponse,
+        //         stripePaymentIntentId,
+        //     },
+        //     { new: true }
+        // );
+
+        // if (!booking) {
+        //     return next(new ErrorHandler("Booking could not be updated", 400));
+        // }
+
+        // res.status(200).json({ booking });
     }
 );
 
@@ -318,16 +333,13 @@ const createBooking = catchAsyncErrors(
         }
 
         let expertEmailSubject = `SlicedAdvice: ${booking.customer.name} has booked you for advice!`;
-        let expertEmailMessage = `Hi there, ${
-            booking.expertisePost.user.name
-        }, \n\n
-        ${
-            booking.customer.name
-        } has booked you for a ${booking.bookingType.toLowerCase()}! \n\n
+        let expertEmailMessage = `Hi there, ${booking.expertisePost.user.name
+            }, \n\n
+        ${booking.customer.name
+            } has booked you for a ${booking.bookingType.toLowerCase()}! \n\n
         You can respond to the booking here: \n
-        ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/dashboard/expert/bookings?booking=${
-            booking._id
-        } \n\n
+        ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/dashboard/expert/bookings?booking=${booking._id
+            } \n\n
         As a reminder, the window to respond is 7 days. Feel free to contact us if you have any questions. \n\n
         Thanks for using SlicedAdvice! \n\n
         SlicedAdvice Team`;

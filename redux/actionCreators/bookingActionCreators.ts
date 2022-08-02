@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import absoluteUrl from "next-absolute-url";
 import {
     CREATE_STRIPE_PAYMENT_INTENT_REQUEST,
@@ -126,8 +127,12 @@ export const updateBooking =
 
             let finalData = {
                 ...bookingData,
-                chargePaymentIntent,
+                chargePaymentIntent
             };
+            
+            console.log("Booking Action Creator");
+            console.log(finalData.singleTextResponse);
+            // console.log(typeof(finalData.singleTextResponse.videoResponse));
 
             const { data } = await axios.put(
                 `/api/bookings/${bookingId}`,
