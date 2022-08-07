@@ -97,7 +97,7 @@ const DetailsSingleTextResponseBooking = ({
                             customerSubmission:
                                 booking.singleTextResponse.customerSubmission,
                             expertResponse: textResponse,
-                            videoResponse: videoURL
+                            videoResponseURL: videoURL
                         },
                         status: "Completed",
                     })
