@@ -82,6 +82,11 @@ const bookingSchema = new mongoose.Schema<BookingInterface>({
             //     1000,
             //     "The expert's response to this single text response booking cannot be more than 1000 characters",
             // ],
+        },
+
+        videoResponseURL: {
+            type: String,
+            required: false
         }
     },
     createdAt: {

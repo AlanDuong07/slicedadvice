@@ -60,7 +60,7 @@ const DetailsSingleTextResponseBooking = ({
         const widget = window.cloudinary.createUploadWidget(
             {
                 cloudName: "slicedadvice",
-                uploadPreset: "q2k9cym0",
+                uploadPreset: "typgzlow",
                 clientAllowedFormats: ["mp4", "webm"],
                 sources: ['local'],
                 theme: "minimal",
@@ -83,34 +83,38 @@ const DetailsSingleTextResponseBooking = ({
         widget.open(); // open up the widget after creation
     };
 
-    const changeVideo = () => {
-        cloudinary.uploader.destroy(imagePublicId, (result) => {
-            console.log(result);
-        })
-    }
-
     // Handle the send response button click, updating the booking
     // if the current booking's status is "Not Completed",
     // also charging the Stripe payment intent (denoted by inputting
     // true as the second argument to updateBooking)
     const handleSendResponseClick = () => {
         if (booking.status !== "Completed") {
-
-            // console.log(videoURL);
-
-            dispatch(
-                updateBooking(booking._id, true, {
-                    ...booking,
-                    singleTextResponse: {
-                        customerSubmission:
-                            booking.singleTextResponse.customerSubmission,
-                        expertResponse: textResponse,
-                        videoResponse: videoURL,
-                        videoPublicId: imagePublicId
-                    },
-                    status: "Completed",
-                })
-            );
+            if (videoURL) {
+                dispatch(
+                    updateBooking(booking._id, true, {
+                        ...booking,
+                        singleTextResponse: {
+                            customerSubmission:
+                                booking.singleTextResponse.customerSubmission,
+                            expertResponse: textResponse,
+                            videoResponse: videoURL
+                        },
+                        status: "Completed",
+                    })
+                );
+            } else {
+                dispatch(
+                    updateBooking(booking._id, true, {
+                        ...booking,
+                        singleTextResponse: {
+                            customerSubmission:
+                                booking.singleTextResponse.customerSubmission,
+                            expertResponse: textResponse
+                        },
+                        status: "Completed",
+                    })
+                );
+            }
         }
     };
 
