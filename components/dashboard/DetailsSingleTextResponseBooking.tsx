@@ -201,8 +201,15 @@ const DetailsSingleTextResponseBooking = ({
                 {/* Display the expert response */}
                 <h1 className="text-md -mb-2">Expert&apos;s Response</h1>
                 {dashboardType === "Advice Seeker" && (
-                    <div className="w-full h-60 sm:h-72 border border-black/10 font-light leading-relaxed p-4 rounded-lg overflow-auto">
-                        {booking?.singleTextResponse?.expertResponse}
+                    <div>
+                        <div className="w-full h-60 sm:h-72 border border-black/10 font-light leading-relaxed p-4 rounded-lg overflow-auto">
+                            {booking?.singleTextResponse?.expertResponse}
+                        </div>
+
+                        <div>
+                            <h2 className="text-md mt-4">Video Response</h2>
+                            <video className="rounded-xl my-5" controls src={ booking?.singleTextResponse?.videoResponseURL }></video>
+                        </div>
                     </div>
                 )}
 
