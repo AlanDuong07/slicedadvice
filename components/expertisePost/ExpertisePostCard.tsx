@@ -22,17 +22,19 @@ const ExpertisePostCard = ({ expertisePost }: expertisePostCardInterface) => {
     // isPostOwner decides whether to show the update button or not
     useEffect(() => {
         if (session) {
-            if (JSON.stringify(session.user._id) !== JSON.stringify(expertisePost.user)) {
-                setIsPostOwner(false)
-                console.log(isPostOwner)
+            if (
+                JSON.stringify(session.user._id) !==
+                JSON.stringify(expertisePost.user)
+            ) {
+                setIsPostOwner(false);
+                console.log(isPostOwner);
             } else {
-                setIsPostOwner(true)
-                console.log(isPostOwner)
+                setIsPostOwner(true);
+                console.log(isPostOwner);
             }
         }
     }, [expertisePost.user, isPostOwner, session]);
 
-    
     //These calculations allow us to slice the title at the right place so that
     //the title is always only two lines. Still a work in progress.
     // Updated as of June 23, 2022
@@ -44,16 +46,23 @@ const ExpertisePostCard = ({ expertisePost }: expertisePostCardInterface) => {
         <>
             <Link href={`/expertisePost/${expertisePost._id}`} passHref>
                 <div className="flex relative bg-transparent flex-col min-w-[20rem] max-w-xs sm:min-w-[20rem] sm:max-w-[20rem] h-full rounded-2xl bg-brand-bg-light cursor-pointer hover:-mt-[2px] transition-all snap-start">
-                    <div className="expertisePostCardImageWrapper ">
+                    <div className="expertisePostCardImageWrapper relative">
                         {/* <a className=""> */}
-                            <Image
-                                src={expertisePost["images"][0]["url"]}
-                                layout="responsive"
-                                width={1}
-                                height={1.2}
-                                className="rounded-md w-full h-full object-center object-cover"
-                                alt={expertisePost["title"]}
-                            />
+                        <h1 className="absolute bottom-4 left-4 z-10 text-white text-4xl font-semibold tracking-tight">
+                            
+                        </h1>
+                        <Image
+                            src={expertisePost["images"][0]["url"]}
+                            layout="responsive"
+                            width={1}
+                            height={1.2}
+                            className="rounded-md w-full h-full object-center object-cover z-0"
+                            alt={expertisePost["title"]}
+                        />
+                        <div
+                            aria-hidden="true"
+                            className="bg-gradient-to-b from-transparent to-black opacity-30 absolute inset-0"
+                        />
                         {/* </a> */}
                     </div>
                     <div className="flex flex-col justify-start items-between mt-2 gap-2">
@@ -79,11 +88,15 @@ const ExpertisePostCard = ({ expertisePost }: expertisePostCardInterface) => {
                         </div>
                     </div>
 
-                    {isPostOwner &&
-                        <Link href={`/expertisePost/update/${expertisePost._id}`}>
-                            <a className="my-4 py-2 px-4 w-fit bg-brand-primary-light rounded-md text-white text-center">Update</a>
+                    {isPostOwner && (
+                        <Link
+                            href={`/expertisePost/update/${expertisePost._id}`}
+                        >
+                            <a className="my-4 py-2 px-4 w-fit bg-brand-primary-light rounded-md text-white text-center">
+                                Update
+                            </a>
                         </Link>
-                    }
+                    )}
                 </div>
             </Link>
         </>
