@@ -49,7 +49,7 @@ const ExpertisePostCard = ({ expertisePost }: expertisePostCardInterface) => {
                     <div className="expertisePostCardImageWrapper relative">
                         {/* <a className=""> */}
                         <h1 className="absolute bottom-4 left-4 z-10 text-white text-4xl font-semibold tracking-tight">
-                            
+                            {expertisePost?.user?.name}
                         </h1>
                         <Image
                             src={expertisePost["images"][0]["url"]}
