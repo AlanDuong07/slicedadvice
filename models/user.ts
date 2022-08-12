@@ -71,7 +71,32 @@ const userSchema = new mongoose.Schema<UserInterface>({
 
 //Encrypt password before saving user
 userSchema.pre("save", async function (next) {
-    //if not modified, don't hash anything. Move on.
+    // If the user inputted a name, check if it is in our list of blacklisted
+    // names. If it is, throw an error.
+    if (this.isModified("name")) {
+        // Blacklisted for obvious reasons hehe :)
+        const blacklistedNames = [
+            "categories",
+            "dashboard",
+            "api",
+            "expertisePost",
+            "legal",
+            "me",
+            "password",
+            "adviceSeekers",
+            "emailVerification",
+            "experts",
+            "login",
+            "register",
+            "support",
+            "team",
+        ];
+        if (blacklistedNames.includes(this.name.toLowerCase())) {
+            throw new Error("Sorry! That username isn't allowed.");
+            return;
+        }
+    }
+    //if password not modified, don't hash anything.
     if (!this.isModified("password")) {
         next();
     }
