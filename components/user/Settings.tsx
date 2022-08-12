@@ -251,10 +251,10 @@ export default function Settings() {
                                                 type="text"
                                                 name="name"
                                                 id="name"
-                                                value={user.name}
+                                                value={user.name.replace(/\s+/g, "").toLowerCase()}
                                                 autoComplete="name"
                                                 onChange={onChange}
-                                                className="focus:ring-brand-primary-light focus:border-brand-primary-light flex-grow block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+                                                className="lowercase focus:ring-brand-primary-light focus:border-brand-primary-light flex-grow block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
                                             />
                                         </div>
                                     </div>

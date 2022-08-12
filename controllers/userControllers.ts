@@ -42,7 +42,8 @@ const registerUserByCredentials = catchAsyncErrors(
         const { name, email, password } = req.body;
 
         const user = await User.create({
-            name,
+            // Needed to prevent bad actors from programmatically entering spaces and uppercase
+            name: name.replace(/\s+/g, "").toLowerCase(),
             email,
             password,
             avatar: {
@@ -80,11 +81,15 @@ const getUserProfileById = catchAsyncErrors(
 const updateUserProfile = catchAsyncErrors(
     async (req: any, res: NextApiResponse) => {
         const user = await User.findById(req.body.userId);
+        // Needed to prevent bad actors from programmatically entering spaces and uppercase
+        const inputtedUserName = req.body.name
+            .replace(/\s+/g, "")
+            .toLowerCase();
         if (user) {
-            if (req.body.name !== user.name) {
+            if (inputtedUserName !== user.name) {
                 // Check if req.body.name is a duplicate username in the database of users
                 const duplicateUser = await User.findOne({
-                    name: req.body.name,
+                    name: inputtedUserName,
                 });
 
                 if (duplicateUser) {
@@ -92,7 +97,7 @@ const updateUserProfile = catchAsyncErrors(
                         message: "Username already exists, try another!",
                     });
                 } else {
-                    user.name = req.body.name;
+                    user.name = inputtedUserName;
                 }
             }
 
@@ -379,8 +384,12 @@ const checkDuplicateUser = catchAsyncErrors(
     async (req: any, res: NextApiResponse) => {
         let user1, user2;
         const { name, email } = req.query;
-        if (name) {
-            user1 = await User.findOne({ name: name });
+        // Needed to prevent bad actors from programmatically entering spaces and uppercase
+        let nameWithNoSpacesOrUpperCase = name
+            .replace(/\s+/g, "")
+            .toLowerCase();
+        if (nameWithNoSpacesOrUpperCase) {
+            user1 = await User.findOne({ name: nameWithNoSpacesOrUpperCase });
         }
         if (email) {
             user2 = await User.findOne({ email: email });

@@ -56,7 +56,7 @@ const Register = () => {
         setLoading(true);
         if (password === confirmPassword) {
             const userData = {
-                name,
+                name: name.toLowerCase(),
                 email,
                 password,
                 avatar,
@@ -332,8 +332,8 @@ const Register = () => {
                                         name="name"
                                         type="name"
                                         required
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary-light/70 focus:border-brand-primary-light/70 sm:text-sm"
-                                        value={name}
+                                        className="lowercase appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary-light/70 focus:border-brand-primary-light/70 sm:text-sm"
+                                        value={name.replace(/\s+/g, '')}
                                         onChange={onChange}
                                     />
                                 </div>
