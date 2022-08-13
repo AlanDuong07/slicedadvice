@@ -42,14 +42,10 @@ const registerUserByCredentials = catchAsyncErrors(
         const { firstName, lastName, name, email, password } = req.body;
 
         const user = await User.create({
-<<<<<<< HEAD
             // Needed to prevent bad actors from programmatically entering spaces and uppercase
             name: name.replace(/\s+/g, "").toLowerCase(),
-=======
             firstName,
             lastName,
-            name,
->>>>>>> cde9c3788afee76864e6a62a906afbbe66b85d09
             email,
             password,
             avatar: {
@@ -92,73 +88,71 @@ const updateUserProfile = catchAsyncErrors(
             .replace(/\s+/g, "")
             .toLowerCase();
         if (user) {
-<<<<<<< HEAD
             if (inputtedUserName !== user.name) {
-=======
-            if (req.body.firstName !== user.firstName) {
-                user.firstName = req.body.firstName;
-            }
+                if (req.body.firstName !== user.firstName) {
+                    user.firstName = req.body.firstName;
+                }
 
-            if (req.body.lastName !== user.lastName) {
-                user.lastName = req.body.lastName;
-            }
+                if (req.body.lastName !== user.lastName) {
+                    user.lastName = req.body.lastName;
+                }
 
-            if (req.body.name !== user.name) {
->>>>>>> cde9c3788afee76864e6a62a906afbbe66b85d09
-                // Check if req.body.name is a duplicate username in the database of users
-                const duplicateUser = await User.findOne({
-                    name: inputtedUserName,
-                });
-
-                if (duplicateUser) {
-                    return res.status(400).json({
-                        message: "Username already exists, try another!",
+                if (req.body.name !== user.name) {
+                    // Check if req.body.name is a duplicate username in the database of users
+                    const duplicateUser = await User.findOne({
+                        name: inputtedUserName,
                     });
-                } else {
-                    user.name = inputtedUserName;
-                }
-            }
 
-            // As of July 7th, this code should never run.
-            // Email updating is not allowed, until we code in
-            // email verification here as well.
-            if (req.body.email !== "") {
-                user.email = req.body.email;
-            }
-
-            if (req.body.password) {
-                user.password = req.body.password;
-            }
-            if (req.body.cloudinaryImageData !== null) {
-                const image_id = user.avatar.public_id;
-
-                if (image_id !== "slicedadvice/avatars/default_avatar") {
-                    //Delete user's previous avatar if they don't have the default currently.
-                    await cloudinary.uploader.destroy(image_id);
+                    if (duplicateUser) {
+                        return res.status(400).json({
+                            message: "Username already exists, try another!",
+                        });
+                    } else {
+                        user.name = inputtedUserName;
+                    }
                 }
 
-                //Upload user's new avatar
-                // const result = await cloudinary.uploader.upload(
-                //     req.body.avatar,
-                //     {
-                //         folder: "slicedadvice/avatars",
-                //         width: "150",
-                //         crop: "scale",
-                //     }
-                // );
+                // As of July 7th, this code should never run.
+                // Email updating is not allowed, until we code in
+                // email verification here as well.
+                if (req.body.email !== "") {
+                    user.email = req.body.email;
+                }
 
-                user.avatar = {
-                    public_id: req.body.cloudinaryImageData.public_id,
-                    url: req.body.cloudinaryImageData.url,
-                };
+                if (req.body.password) {
+                    user.password = req.body.password;
+                }
+                if (req.body.cloudinaryImageData !== null) {
+                    const image_id = user.avatar.public_id;
+
+                    if (image_id !== "slicedadvice/avatars/default_avatar") {
+                        //Delete user's previous avatar if they don't have the default currently.
+                        await cloudinary.uploader.destroy(image_id);
+                    }
+
+                    //Upload user's new avatar
+                    // const result = await cloudinary.uploader.upload(
+                    //     req.body.avatar,
+                    //     {
+                    //         folder: "slicedadvice/avatars",
+                    //         width: "150",
+                    //         crop: "scale",
+                    //     }
+                    // );
+
+                    user.avatar = {
+                        public_id: req.body.cloudinaryImageData.public_id,
+                        url: req.body.cloudinaryImageData.url,
+                    };
+                }
+                await user.save();
             }
-            await user.save();
+
+            res.status(200).json({
+                success: true,
+                user,
+            });
         }
-
-        res.status(200).json({
-            success: true,
-            user,
-        });
     }
 );
 
@@ -327,7 +321,8 @@ const sendEmailVerification = catchAsyncErrors(
             Please enter it in the already open verification page. \n\n
             \n\n
             Need to generate a new code? Head to the link below.\n\n
-            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${user.email
+            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${
+                user.email
             } \n\n`,
             `If you did not request this email, then please ignore it. Have a great day!`
         );
@@ -337,8 +332,9 @@ const sendEmailVerification = catchAsyncErrors(
             Please enter it in the already open verification page. \n\n
             \n\n
             Need to generate a new code? Head to the link below.\n\n
-            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${user.email
-            } \n\n
+            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${
+            user.email
+        } \n\n
             If you did not request this email, then please ignore it. Have a great day!`;
 
         try {
