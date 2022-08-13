@@ -19,6 +19,8 @@ const Register = () => {
     const dispatch = useAppDispatch();
     const { query: queryParams } = useRouter();
     const [user, setUser] = useState({
+        firstName: "",
+        lastName: "",
         name: "",
         email: "",
         password: "",
@@ -41,7 +43,7 @@ const Register = () => {
         loginUrl += `returnUrl=${queryParams.returnUrl.toString()}&returnContext=${queryParams.returnContext.toString()}&`;
     }
 
-    const { name, email, password } = user;
+    const { firstName, lastName, name, email, password } = user;
 
     const [avatar, setAvatar] = useState("/images/default_avatar.jpeg");
     const [avatarPreview, setAvatarPreview] = useState(
@@ -56,7 +58,13 @@ const Register = () => {
         setLoading(true);
         if (password === confirmPassword) {
             const userData = {
+<<<<<<< HEAD
                 name: name.toLowerCase(),
+=======
+                firstName,
+                lastName,
+                name,
+>>>>>>> cde9c3788afee76864e6a62a906afbbe66b85d09
                 email,
                 password,
                 avatar,
@@ -301,6 +309,49 @@ const Register = () => {
                             action="#"
                             method="POST"
                         >
+                            <div>
+                                <label
+                                    htmlFor="firstName"
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    First Name
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        id="firstName"
+                                        name="firstName"
+                                        type="text"
+                                        autoComplete="on"
+                                        required
+                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary-light/70 focus:border-brand-primary-light/70 sm:text-sm"
+                                        value={firstName}
+                                        onChange={onChange}
+                                    />
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <label
+                                    htmlFor="lastName"
+                                    className="block text-sm font-medium text-gray-700"
+                                >
+                                    Last Name
+                                </label>
+                                <div className="mt-1">
+                                    <input
+                                        id="lastName"
+                                        name="lastName"
+                                        type="text"
+                                        autoComplete="on"
+                                        required
+                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary-light/70 focus:border-brand-primary-light/70 sm:text-sm"
+                                        value={lastName}
+                                        onChange={onChange}
+                                    />
+                                </div>
+                            </div>
+
                             <div>
                                 <label
                                     htmlFor="email"
