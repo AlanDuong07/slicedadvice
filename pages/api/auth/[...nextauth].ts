@@ -14,7 +14,7 @@ export default NextAuth({
         // error: '/auth/error', // Error code passed in query string as ?error=
         // verifyRequest: '/auth/verify-request', // (used for check email message)
         // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
-      },
+    },
     session: {
         strategy: "jwt",
     },
@@ -114,20 +114,28 @@ export default NextAuth({
                     // GOOGLE SIGN IN FOR NEW EMAIL. 
                     // Create the user in the database 
                     // and attach the same info to the token.
-                    
+
                     // Set the name to be their username from Google. They can change
                     // it later. Ofc, we'll have to check just in case 
                     // a user already used that name
                     const checkDuplicateUser = await UserModel.findOne({ name: token.name });
-                    
+
                     // If no duplicate, this new user's name will be their email. If there's a dup,
                     // just append the current date. Should be unique.
                     const newUserName = !checkDuplicateUser ? token.name : `${token.name}_${Date.now()}`;
+
+                    console.log(token);
+
+                    const trimmedArrayFullName = token?.name?.trim().split(/\s+/);
+                    const firstNameGoogle = trimmedArrayFullName[0];
+                    const lastNameGoogle = trimmedArrayFullName[1];
 
                     // Hash the email. Gonna set this to be their password, just in case something crazy 
                     // happens. Never know when it could be useful.
                     const hashedEmail = await bcrypt.hash(token.email, 10);
                     const newUser = new UserModel({
+                        firstName: firstNameGoogle,
+                        lastName: lastNameGoogle,
                         name: newUserName,
                         email: token.email,
                         avatar: {

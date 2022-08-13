@@ -39,9 +39,11 @@ const registerUserByCredentials = catchAsyncErrors(
             };
         }
 
-        const { name, email, password } = req.body;
+        const { firstName, lastName, name, email, password } = req.body;
 
         const user = await User.create({
+            firstName,
+            lastName,
             name,
             email,
             password,
@@ -81,6 +83,14 @@ const updateUserProfile = catchAsyncErrors(
     async (req: any, res: NextApiResponse) => {
         const user = await User.findById(req.body.userId);
         if (user) {
+            if (req.body.firstName !== user.firstName) {
+                user.firstName = req.body.firstName;
+            }
+
+            if (req.body.lastName !== user.lastName) {
+                user.lastName = req.body.lastName;
+            }
+
             if (req.body.name !== user.name) {
                 // Check if req.body.name is a duplicate username in the database of users
                 const duplicateUser = await User.findOne({
@@ -304,8 +314,7 @@ const sendEmailVerification = catchAsyncErrors(
             Please enter it in the already open verification page. \n\n
             \n\n
             Need to generate a new code? Head to the link below.\n\n
-            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${
-                user.email
+            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${user.email
             } \n\n`,
             `If you did not request this email, then please ignore it. Have a great day!`
         );
@@ -315,9 +324,8 @@ const sendEmailVerification = catchAsyncErrors(
             Please enter it in the already open verification page. \n\n
             \n\n
             Need to generate a new code? Head to the link below.\n\n
-            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${
-            user.email
-        } \n\n
+            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${user.email
+            } \n\n
             If you did not request this email, then please ignore it. Have a great day!`;
 
         try {

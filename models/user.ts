@@ -4,6 +4,8 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
 interface UserInterface {
+    firstName: String;
+    lastName: String;
     name: String;
     email: String;
     password: any;
@@ -20,6 +22,16 @@ interface UserInterface {
 }
 
 const userSchema = new mongoose.Schema<UserInterface>({
+    firstName: {
+        type: String,
+        required: [true, "Please enter your first name"],
+        maxLength: [50, "Your name cannot exceed 50 characters"],
+    },
+    lastName: {
+        type: String,
+        required: [true, "Please enter your last name"],
+        maxLength: [50, "Your name cannot exceed 50 characters"],
+    },
     name: {
         type: String,
         required: [true, "Please enter your name"],

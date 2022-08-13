@@ -39,11 +39,13 @@ export default function Settings() {
     const [loading, setLoading] = useState(false);
     const [userInteracted, setUserInteracted] = useState(false);
     const [user, setUser] = useState({
+        firstName: "",
+        lastName: "",
         name: "",
         email: "",
         password: "",
     });
-    const { name, email, password } = user;
+    const { firstName, lastName, name, email, password } = user;
     const [avatar, setAvatar] = useState("");
     const [avatarPreview, setAvatarPreview] = useState(
         "/images/default_avatar.jpeg"
@@ -66,7 +68,10 @@ export default function Settings() {
         // After updating, set frontend user state to match new
         // backend user state
         if (userAfterUpdating) {
+            console.log(userAfterUpdating);
             setUser({
+                firstName: userAfterUpdating.firstName,
+                lastName: userAfterUpdating.lastName,
                 name: userAfterUpdating.name,
                 email: userAfterUpdating.email,
                 password: "",
@@ -77,6 +82,8 @@ export default function Settings() {
             // Initial Setting of user state so frontend
             // can load stuff.
             setUser({
+                firstName: authUser.firstName,
+                lastName: authUser.lastName,
                 name: authUser.name,
                 email: authUser.email,
                 password: "",
@@ -139,6 +146,8 @@ export default function Settings() {
             dispatch(
                 updateUserProfile({
                     userId: authUser._id,
+                    firstName,
+                    lastName,
                     name,
                     email: "",
                     password,
@@ -155,6 +164,8 @@ export default function Settings() {
             dispatch(
                 updateUserProfile({
                     userId: authUser._id,
+                    firstName,
+                    lastName,
                     name,
                     email: "",
                     cloudinaryImageData: changedAvatar
@@ -235,6 +246,48 @@ export default function Settings() {
                                     </p>
                                 </div>
 
+
+                                <div className="col-span-3 sm:col-span-2">
+                                    <label
+                                        htmlFor="firstName"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        First Name
+                                    </label>
+                                    <div className="mt-1 rounded-md shadow-sm flex">
+                                        <input
+                                            type="text"
+                                            name="firstName"
+                                            id="firstName"
+                                            value={user.firstName}
+                                            autoComplete="on"
+                                            onChange={onChange}
+                                            className="focus:ring-brand-primary-light focus:border-brand-primary-light flex-grow block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+                                        />
+                                    </div>
+                                </div>
+
+
+                                <div className="col-span-3 sm:col-span-2">
+                                    <label
+                                        htmlFor="lastName"
+                                        className="block text-sm font-medium text-gray-700"
+                                    >
+                                        Last Name
+                                    </label>
+                                    <div className="mt-1 rounded-md shadow-sm flex">
+                                        <input
+                                            type="text"
+                                            name="lastName"
+                                            id="lastName"
+                                            value={user.lastName}
+                                            autoComplete="on"
+                                            onChange={onChange}
+                                            className="focus:ring-brand-primary-light focus:border-brand-primary-light flex-grow block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
+                                        />
+                                    </div>
+                                </div>
+
                                 <div className="grid grid-cols-3 gap-6">
                                     <div className="col-span-3 sm:col-span-2">
                                         <label
@@ -258,25 +311,6 @@ export default function Settings() {
                                             />
                                         </div>
                                     </div>
-                                    {/* <div className="col-span-3 sm:col-span-2">
-                                        <label
-                                            htmlFor="email"
-                                            className="block text-sm font-medium text-gray-700"
-                                        >
-                                            Email
-                                        </label>
-                                        <div className="mt-1 rounded-md shadow-sm flex">
-                                            <input
-                                                type="text"
-                                                name="email"
-                                                id="email"
-                                                value={user.email}
-                                                autoComplete="email"
-                                                onChange={onChange}
-                                                className="focus:ring-brand-primary-light focus:border-brand-primary-light flex-grow block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
-                                            />
-                                        </div>
-                                    </div> */}
 
                                     {/* Google user's shouldn't be able to change their
                                     password! */}
@@ -435,8 +469,8 @@ export default function Settings() {
                                     type="submit"
                                     disabled={
                                         !userInteracted ||
-                                        userLoading ||
-                                        loading
+                                            userLoading ||
+                                            loading
                                             ? true
                                             : false
                                     }
