@@ -62,7 +62,9 @@ const Register = () => {
                 avatar,
             };
 
+
             try {
+                // Checking for a duplicate email and username.
                 const { data } = await axios.get(
                     `/api/auth/duplicate?email=${email}&name=${name}`
                 );
