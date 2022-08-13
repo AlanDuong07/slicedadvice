@@ -39,11 +39,17 @@ const registerUserByCredentials = catchAsyncErrors(
             };
         }
 
-        const { name, email, password } = req.body;
+        const { firstName, lastName, name, email, password } = req.body;
 
         const user = await User.create({
+<<<<<<< HEAD
             // Needed to prevent bad actors from programmatically entering spaces and uppercase
             name: name.replace(/\s+/g, "").toLowerCase(),
+=======
+            firstName,
+            lastName,
+            name,
+>>>>>>> cde9c3788afee76864e6a62a906afbbe66b85d09
             email,
             password,
             avatar: {
@@ -86,7 +92,19 @@ const updateUserProfile = catchAsyncErrors(
             .replace(/\s+/g, "")
             .toLowerCase();
         if (user) {
+<<<<<<< HEAD
             if (inputtedUserName !== user.name) {
+=======
+            if (req.body.firstName !== user.firstName) {
+                user.firstName = req.body.firstName;
+            }
+
+            if (req.body.lastName !== user.lastName) {
+                user.lastName = req.body.lastName;
+            }
+
+            if (req.body.name !== user.name) {
+>>>>>>> cde9c3788afee76864e6a62a906afbbe66b85d09
                 // Check if req.body.name is a duplicate username in the database of users
                 const duplicateUser = await User.findOne({
                     name: inputtedUserName,
@@ -309,8 +327,7 @@ const sendEmailVerification = catchAsyncErrors(
             Please enter it in the already open verification page. \n\n
             \n\n
             Need to generate a new code? Head to the link below.\n\n
-            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${
-                user.email
+            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${user.email
             } \n\n`,
             `If you did not request this email, then please ignore it. Have a great day!`
         );
@@ -320,9 +337,8 @@ const sendEmailVerification = catchAsyncErrors(
             Please enter it in the already open verification page. \n\n
             \n\n
             Need to generate a new code? Head to the link below.\n\n
-            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${
-            user.email
-        } \n\n
+            ${process.env.NEXT_PUBLIC_ORIGIN_URL?.toString()}/emailVerification?email=${user.email
+            } \n\n
             If you did not request this email, then please ignore it. Have a great day!`;
 
         try {
