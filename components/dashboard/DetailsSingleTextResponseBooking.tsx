@@ -43,13 +43,13 @@ const DetailsSingleTextResponseBooking = ({
         const today: Date = new Date();
         const createdAt: Date = new Date(booking.createdAt);
         let difference: any = intervalToDuration({ start: createdAt, end: today });
-        if(difference.days >= 7) {
+        if(difference.days >= 7 && expertResponseRef.current) {
             console.log(expertResponseRef.current.disabled);
             expertResponseRef.current.style.cursor = "not-allowed";
             expertResponseRef.current.disabled = true;
             expertResponseRef.current.placeholder = "This booking is expired as you haven't responded to the client within 7 days, their payment has be returned to them.";
         }
-    }, [booking.createdAt])
+    }, [booking.createdAt, expertResponseRef]);
 
     // Handle the send response button click, updating the booking
     // if the current booking's status is "Not Completed",
@@ -106,6 +106,9 @@ const DetailsSingleTextResponseBooking = ({
                     )}
                     {booking?.status === "Completed" && (
                         <Badge color="green" text={booking?.status} />
+                    )}
+                    {booking?.status === "Expired" && (
+                        <Badge color="red" text={booking?.status} />
                     )}
                     <p className="text-xs opacity-50 whitespace-nowrap">
                         {moment(booking?.createdAt).format("MMM Do, YYYY")}
@@ -187,13 +190,12 @@ const DetailsSingleTextResponseBooking = ({
                             onChange={(e) => setTextResponse(e.target.value)}
                         />
                     </div>
-
-                    
                 </div>
             )}
-            <button
+
+                    <button
                         className={classNames(
-                            (booking?.status === "Completed" && dashboardType === "Advice Seeker") ? "opacity-100" :       // slightly jank way to do this, but it works for now
+                            (booking?.status === "Completed" && dashboardType === "Advice Seeker") ? "opacity-100" :
                             (booking?.status === "Completed" && dashboardType === "Expert") ||
                                bookingsMetadata.loading ||
                                 textResponse.length < 30
@@ -217,12 +219,15 @@ const DetailsSingleTextResponseBooking = ({
                             "Send a Follow-Up"
                         ) : booking?.status === "Completed" && dashboardType === "Expert" ? (
                             "Booking Completed"
-                        ) : textResponse.length < 30 ? (
+                        ) : textResponse.length < 30 && dashboardType === "Expert" ? (
                             "Type a Response First!"
+                        ) : textResponse.length < 30 && dashboardType === "Advice Seeker" ? (
+                            "Waiting for Response" 
                         ) : (
                             "Send Response"
                         )}
                     </button>
+
         </div>
     );
 };
