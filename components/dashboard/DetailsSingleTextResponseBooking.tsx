@@ -43,19 +43,19 @@ const DetailsSingleTextResponseBooking = ({
         const today: Date = new Date();
         const createdAt: Date = new Date(booking.createdAt);
         let difference: any = intervalToDuration({ start: createdAt, end: today });
-        if(difference.days >= 7 && expertResponseRef.current) {
+        if(difference.days >= 7) {
             console.log(expertResponseRef.current.disabled);
             expertResponseRef.current.style.cursor = "not-allowed";
             expertResponseRef.current.disabled = true;
             expertResponseRef.current.placeholder = "This booking is expired as you haven't responded to the client within 7 days, their payment has be returned to them.";
         }
-    }, [booking.createdAt, expertResponseRef]);
+    }, [booking.createdAt])
 
     // Handle the send response button click, updating the booking
     // if the current booking's status is "Not Completed",
     // also charging the Stripe payment intent (denoted by inputting
     // true as the second argument to updateBooking)
-    const handleSendResponseClick = () => {
+    const handleClick = () => {
         if (booking.status !== "Completed") {
             dispatch(
                 updateBooking(booking._id, true, {
@@ -68,6 +68,10 @@ const DetailsSingleTextResponseBooking = ({
                     status: "Completed",
                 })
             );
+        } else {
+            if (dashboardType === "Advice Seeker") {
+                window.location.replace(`/expertisePost/book/singleTextResponse/${booking?.expertisePost?._id}`)
+            }
         }
     };
 
@@ -102,9 +106,6 @@ const DetailsSingleTextResponseBooking = ({
                     )}
                     {booking?.status === "Completed" && (
                         <Badge color="green" text={booking?.status} />
-                    )}
-                    {booking?.status === "Expired" && (
-                        <Badge color="red" text={booking?.status} />
                     )}
                     <p className="text-xs opacity-50 whitespace-nowrap">
                         {moment(booking?.createdAt).format("MMM Do, YYYY")}
@@ -187,27 +188,34 @@ const DetailsSingleTextResponseBooking = ({
                         />
                     </div>
 
-                    <button
+                    
+                </div>
+            )}
+            <button
                         className={classNames(
-                            booking?.status === "Completed" ||
-                                bookingsMetadata.loading ||
+                            (booking?.status === "Completed" && dashboardType === "Advice Seeker") ? "opacity-100" :       // slightly jank way to do this, but it works for now
+                            (booking?.status === "Completed" && dashboardType === "Expert") ||
+                               bookingsMetadata.loading ||
                                 textResponse.length < 30
                                 ? "opacity-40"
                                 : "opacity-100",
                             `flex justify-center items-center rounded-xl bg-brand-primary-light hover:bg-brand-primary-light/80 text-white p-3 font-semibold text-md md:text-lg`
                         )}
-                        onClick={handleSendResponseClick}
+                        onClick={handleClick}
                         disabled={
-                            bookingsMetadata.loading ||
+                        (booking?.status === "Completed" && dashboardType === "Advice Seeker") ? false :
+                        bookingsMetadata.loading ||
                                 textResponse.length < 30 ||
-                                booking?.status === "Completed"
+                                (booking?.status === "Completed" && dashboardType === "Expert")
                                 ? true
                                 : false
                         }
                     >
                         {bookingsMetadata.loading ? (
                             <ButtonLoader />
-                        ) : booking?.status === "Completed" ? (
+                        ) : booking?.status === "Completed" && dashboardType === "Advice Seeker" ? (
+                            "Send a Follow-Up"
+                        ) : booking?.status === "Completed" && dashboardType === "Expert" ? (
                             "Booking Completed"
                         ) : textResponse.length < 30 ? (
                             "Type a Response First!"
@@ -215,8 +223,6 @@ const DetailsSingleTextResponseBooking = ({
                             "Send Response"
                         )}
                     </button>
-                </div>
-            )}
         </div>
     );
 };
